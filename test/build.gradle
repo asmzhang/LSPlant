@@ -1,7 +1,7 @@
 import com.android.build.api.dsl.ManagedVirtualDevice
 
 plugins {
-    alias(libs.plugins.agp.app)
+    alias libs.plugins.agp.app
 }
 
 val androidTargetSdkVersion: Int by rootProject.extra
@@ -57,11 +57,13 @@ android {
     testOptions {
         managedDevices {
             allDevices {
-                fun createDevice(api: Int, is64: Boolean, target: String = "default") = create<ManagedVirtualDevice>("""avd-$api-${if(is64) "x86_64" else "x86"}-$target""") {
-                    device = "Pixel 2"
-                    apiLevel = api
-                    systemImageSource = target
-                    require64Bit = is64
+                def createDevice = { api, is64, target = "default" ->
+                    create("avd-${api}-${is64 ? "x86_64" : "x86"}-${target}", ManagedVirtualDevice) {
+                        device = "Pixel 2"
+                        apiLevel = api
+                        systemImageSource = target
+                        require64Bit = is64
+                    }
                 }
 
                 createDevice(21, false)
@@ -84,7 +86,7 @@ android {
                 createDevice(29, true)
                 createDevice(30, false, "aosp_atd")
                 createDevice(30, true)
-//                createDevice(31, false, "android-tv")
+                // createDevice(31, false, "android-tv")
                 createDevice(31, true, "aosp_atd")
                 createDevice(32, true, "google_apis")
                 createDevice(33, true, "google_apis")
@@ -95,11 +97,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":lsplant"))
-    implementation(libs.dobby)
+    implementation project(":lsplant")
+    implementation libs.dobby
 
-    androidTestImplementation(libs.test.ext.junit)
-    androidTestImplementation(libs.test.runner)
-    androidTestImplementation(libs.test.espresso)
+    androidTestImplementation libs.test.ext.junit
+    androidTestImplementation libs.test.runner
+    androidTestImplementation libs.test.espresso
 }
-

@@ -1,0 +1,14 @@
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+}
+
+rootProject.ext {
+    androidTargetSdkVersion = 36
+    androidMinSdkVersion = 21
+    androidBuildToolsVersion = "35.0.0"
+    androidCompileSdkVersion = 36
+    androidNdkVersion = "29.0.13599879"
+    //androidCmakeVersion = "3.28.0+"
+    androidCmakeVersion = "3.31.6+"
+}
