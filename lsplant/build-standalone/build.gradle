@@ -1,0 +1,126 @@
+plugins {
+    alias(libs.plugins.android.library)
+    id 'maven-publish'
+}
+
+android {
+    namespace = "org.lsposed.lsplant.standalone"
+
+    compileSdk rootProject.ext.androidCompileSdkVersion
+    ndkVersion rootProject.ext.androidNdkVersion
+    buildToolsVersion rootProject.ext.androidBuildToolsVersion
+
+    buildFeatures {
+        prefab true
+        prefabPublishing false
+
+        buildConfig false
+        androidResources false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdk rootProject.ext.androidMinSdkVersion
+        targetSdk rootProject.ext.androidTargetSdkVersion
+
+        externalNativeBuild {
+            cmake {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+
+                arguments(
+                        "-DANDROID_STL=c++_shared",
+                        "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+                        "-DDEBUG_SYMBOLS_PATH=${project.layout.buildDirectory.file("symbols/standalone").get().asFile.absolutePath}",
+                        "-DANDROID_CPP_FEATURES=exceptions;rtti"
+                )
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            minifyEnabled false
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Release"
+                    cppFlags "-O3"
+                    cFlags "-O3"
+                }
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("CMakeLists.txt")
+            version rootProject.ext.androidCmakeVersion
+        }
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+}
+
+task generateStandaloneSymbolsJar(type: Jar) {
+    from project.layout.buildDirectory.file("symbols/standalone")
+    exclude "**/dex_builder"
+    archiveClassifier = "symbols"
+    archiveBaseName = "standalone"
+}
+
+def ver = "6.5.0"
+println "LSPlant Standalone version: $ver"
+
+publishing {
+    publications {
+        lsplantStandalone(MavenPublication) {
+            groupId = "org.lsposed.lsplant"
+            artifactId = "lsplant-standalone"
+            version = ver
+
+            afterEvaluate {
+                from components.release
+                artifact generateStandaloneSymbolsJar
+            }
+
+            pom {
+                name = "LSPlant"
+                description = "A hook framework for Android Runtime (ART) - Standalone Package"
+                url = "https://github.com/LSPosed/LSPlant"
+                licenses {
+                    license {
+                        name = "GNU Lesser General Public License v3.0"
+                        url = "https://github.com/LSPosed/LSPlant/blob/master/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        name = "LSPosed"
+                        url = "https://lsposed.org"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/LSPosed/LSPlant.git"
+                    url = "https://github.com/LSPosed/LSPlant"
+                }
+            }
+        }
+    }
+}

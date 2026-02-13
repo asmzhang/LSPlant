@@ -1,0 +1,118 @@
+plugins {
+    alias(libs.plugins.android.library)
+    id 'maven-publish'
+}
+
+android {
+    namespace = "org.lsposed.lsplant.prefab"
+
+    compileSdk rootProject.ext.androidCompileSdkVersion
+    ndkVersion rootProject.ext.androidNdkVersion
+    buildToolsVersion rootProject.ext.androidBuildToolsVersion
+
+    buildFeatures {
+        prefab true
+        prefabPublishing true
+
+        buildConfig false
+        androidResources false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdk rootProject.ext.androidMinSdkVersion
+        targetSdk rootProject.ext.androidTargetSdkVersion
+
+        externalNativeBuild {
+            cmake {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+
+                arguments(
+                        "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+                )
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Release"
+                }
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("CMakeLists.txt")
+            version rootProject.ext.androidCmakeVersion
+        }
+    }
+
+    prefab {
+        register("lsplant") {
+            headers = "../src/main/jni"
+        }
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+}
+
+def ver = "6.5.0"
+println "LSPlant Prefab version: $ver"
+
+publishing {
+    publications {
+        lsplant(MavenPublication) {
+            groupId = "org.lsposed.lsplant"
+            artifactId = "lsplant"
+            version = ver
+
+            afterEvaluate {
+                from components.release
+            }
+
+            pom {
+                name = "LSPlant"
+                description = "A hook framework for Android Runtime (ART) - Prefab Package"
+                url = "https://github.com/LSPosed/LSPlant"
+                licenses {
+                    license {
+                        name = "GNU Lesser General Public License v3.0"
+                        url = "https://github.com/LSPosed/LSPlant/blob/master/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        name = "LSPosed"
+                        url = "https://lsposed.org"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/LSPosed/LSPlant.git"
+                    url = "https://github.com/LSPosed/LSPlant"
+                }
+            }
+        }
+    }
+}

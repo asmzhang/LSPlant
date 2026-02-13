@@ -1,0 +1,94 @@
+plugins {
+    alias(libs.plugins.android.library)
+}
+
+android {
+    namespace = "com.asmzx.helper"
+
+    compileSdk rootProject.ext.androidCompileSdkVersion
+    ndkVersion rootProject.ext.androidNdkVersion
+    buildToolsVersion rootProject.ext.androidBuildToolsVersion
+
+    buildFeatures {
+        prefab false
+        prefabPublishing false
+
+        buildConfig false
+        androidResources false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdk rootProject.ext.androidMinSdkVersion
+        targetSdk rootProject.ext.androidTargetSdkVersion
+
+        externalNativeBuild {
+            cmake {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+
+                arguments(
+                        "-DANDROID_STL=c++_static",
+                        "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
+                        "-DANDROID_CPP_FEATURES=exceptions;rtti"
+                )
+            }
+        }
+    }
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+            shrinkResources false
+
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Debug"
+                    cppFlags "-g3 -O0"
+                    cFlags "-g3 -O0"
+                }
+            }
+
+            packaging {
+                jniLibs {
+                    keepDebugSymbols += "**/*.so"
+                }
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("CMakeLists.txt")
+            version rootProject.ext.androidCmakeVersion
+        }
+    }
+
+    publishing {
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds false
+    }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['../src/main/java']
+            }
+        }
+    }
+}
+
+dependencies {
+    implementation libs.appcompat
+    implementation libs.material
+    implementation project(':lsplant:build-srcdebug')
+}
+
+println "Helper Source Debug mode enabled"

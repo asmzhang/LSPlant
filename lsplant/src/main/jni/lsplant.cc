@@ -11,6 +11,7 @@ module;
 #include <array>
 #include <atomic>
 #include <bit>
+#include <mutex>
 #include <string_view>
 #include <tuple>
 
@@ -635,14 +636,44 @@ extern "C++" {
 
 using ::lsplant::IsHooked;
 
-[[maybe_unused]] bool Init(JNIEnv *env, const InitInfo &info) {
-    if (!info.inline_hooker || !info.inline_unhooker || !info.art_symbol_resolver ||
+// [[maybe_unused]] bool Init(JNIEnv *env, const InitInfo &info) {
+//     if (!info.inline_hooker || !info.inline_unhooker || !info.art_symbol_resolver ||
+//         !info.art_symbol_prefix_resolver) {
+//         return false;
+//     }
+//     bool static kInit = InitConfig(info) && InitJNI(env) && InitNative(env, info);
+//     return kInit;
+// }
+
+[[maybe_unused]] int Init(JNIEnv* env, const InitInfo& info) {
+    if (!info.inline_hooker ||
+        !info.inline_unhooker ||
+        !info.art_symbol_resolver ||
         !info.art_symbol_prefix_resolver) {
-        return false;
+        LOGE("Invalid init info");
+        return INIT_FAILED;
     }
-    bool static kInit = InitConfig(info) && InitJNI(env) && InitNative(env, info);
-    return kInit;
+
+    static std::once_flag once;
+    static int init_state = INIT_FAILED;
+
+    std::call_once(once, [&]() {
+        if (InitConfig(info) &&
+            InitJNI(env) &&
+            InitNative(env, info)) {
+            init_state = INIT_SUCCESS;
+            LOGI("LSPlant initialized successfully");
+        } else {
+            init_state = INIT_FAILED;
+            LOGE("LSPlant initialization failed");
+        }
+    });
+
+    return init_state == INIT_SUCCESS
+           ? INIT_SUCCESS
+           : INIT_ALREADY_DONE;
 }
+
 
 [[maybe_unused]] jobject Hook(JNIEnv *env, jobject target_method, jobject hooker_object,
                               jobject callback_method) {

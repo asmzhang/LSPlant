@@ -1,0 +1,121 @@
+plugins {
+    alias(libs.plugins.android.library)
+    id 'maven-publish'
+}
+
+android {
+    namespace = "com.asmzx.helper.prefab"
+
+    compileSdk rootProject.ext.androidCompileSdkVersion
+    ndkVersion rootProject.ext.androidNdkVersion
+    buildToolsVersion rootProject.ext.androidBuildToolsVersion
+
+    buildFeatures {
+        prefab true
+        prefabPublishing true
+
+        buildConfig false
+        androidResources false
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+
+    defaultConfig {
+        minSdk rootProject.ext.androidMinSdkVersion
+        targetSdk rootProject.ext.androidTargetSdkVersion
+
+        externalNativeBuild {
+            cmake {
+                abiFilters "armeabi-v7a", "arm64-v8a"
+
+                arguments(
+                        "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON"
+                )
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            debuggable false
+            externalNativeBuild {
+                cmake {
+                    arguments "-DCMAKE_BUILD_TYPE=Release"
+                }
+            }
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path = file("CMakeLists.txt")
+            version rootProject.ext.androidCmakeVersion
+        }
+    }
+
+    prefab {
+        register("helper") {
+            headers = "../../src/main/cpp"
+        }
+    }
+
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+            withJavadocJar()
+        }
+    }
+
+    lint {
+        abortOnError true
+        checkReleaseBuilds false
+    }
+}
+
+dependencies {
+    implementation project(':lsplant:build-prefab')
+    implementation libs.appcompat
+    implementation libs.material
+}
+
+def ver = "1.0.0"
+println "Helper Prefab version: $ver"
+
+publishing {
+    publications {
+        helper(MavenPublication) {
+            groupId = "com.asmzx"
+            artifactId = "helper"
+            version = ver
+
+            afterEvaluate {
+                from components.release
+            }
+
+            pom {
+                name = "Helper"
+                description = "Helper library for LSPlant - Prefab Package"
+                url = "https://github.com/LSPosed/LSPlant"
+                licenses {
+                    license {
+                        name = "GNU Lesser General Public License v3.0"
+                        url = "https://github.com/LSPosed/LSPlant/blob/master/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        name = "asmzx"
+                        url = "https://github.com/asmzx"
+                    }
+                }
+                scm {
+                    connection = "scm:git:https://github.com/LSPosed/LSPlant.git"
+                    url = "https://github.com/LSPosed/LSPlant"
+                }
+            }
+        }
+    }
+}

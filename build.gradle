@@ -8,7 +8,7 @@ rootProject.ext {
     androidMinSdkVersion = 21
     androidBuildToolsVersion = "35.0.0"
     androidCompileSdkVersion = 36
-    androidNdkVersion = "29.0.13599879"
+    androidNdkVersion = "29.0.14206865"
     //androidCmakeVersion = "3.28.0+"
     androidCmakeVersion = "3.31.6+"
 }

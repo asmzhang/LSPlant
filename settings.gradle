@@ -22,5 +22,11 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "LSPlant"
-include ':lsplant'
-//include ':test'
+include ':lsplant:build-prefab'
+include ':lsplant:build-standalone'
+include ':lsplant:build-srcdebug'
+include ':helper:build-prefab'
+include ':helper:build-standalone'
+include ':helper:build-srcdebug'
+include ':app'
+include ':testmod'

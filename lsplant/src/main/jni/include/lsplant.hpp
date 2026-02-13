@@ -62,6 +62,11 @@ struct InitInfo {
     std::string_view generated_method_name = "{target}";
 };
 
+// 定义初始化结果常量
+constexpr int INIT_SUCCESS = 0;        // 初始化成功
+constexpr int INIT_ALREADY_DONE = 1;    // 已经初始化
+constexpr int INIT_FAILED = -1;         // 初始化失败
+
 /// \brief Initialize LSPlant for the proceeding hook.
 /// It mainly prefetch needed symbols and hook some functions.
 /// The env should not have any restriction for accessing hidden APIs.
@@ -72,9 +77,13 @@ struct InitInfo {
 /// libart.so to hook and extract needed native functions of ART.
 /// \return Indicate whether initialization succeed. Behavior is undefined if calling other
 /// LSPlant interfaces before initialization or after a fail initialization.
+/// \return values:
+///   - INIT_SUCCESS (0): Initialization succeeded
+///   - INIT_ALREADY_DONE (1): Already initialized
+///   - INIT_FAILED (-1): Initialization failed
 /// \see InitInfo.
-[[nodiscard, maybe_unused, gnu::visibility("default")]] bool Init(JNIEnv *env,
-                                                                  const InitInfo &info);
+[[nodiscard, maybe_unused, gnu::visibility("default")]] int Init(JNIEnv *env,
+                                                               const InitInfo &info);
 
 /// \brief Hook a Java method by providing the \p target_method together with the context object
 /// \p hooker_object and its callback \p callback_method.
