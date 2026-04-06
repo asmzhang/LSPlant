@@ -12,7 +12,7 @@ project(helper-prefab LANGUAGES C CXX)
 
 # 添加核心源码
 add_subdirectory(
-    ${CMAKE_CURRENT_LIST_DIR}/../../src/main/cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../src/main/cpp
     helper-core-build
 )
 
@@ -29,7 +29,7 @@ set_target_properties(helper PROPERTIES
 
 # 包含目录
 target_include_directories(helper PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/../../src/main/cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../src/main/cpp
 )
 
 # Prefab 硬规则：只 link helper-core

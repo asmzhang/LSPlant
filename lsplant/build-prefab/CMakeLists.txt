@@ -32,9 +32,11 @@ target_include_directories(lsplant PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../src/main/jni
 )
 
-# Prefab 硬规则：只 link lsplant-core
+# Prefab 硬规则：只 link lsplant-core (强制合并不删减)
 target_link_libraries(lsplant PRIVATE
+    -Wl,--whole-archive
     lsplant-core
+    -Wl,--no-whole-archive
 )
 
 # Prefab 硬规则：禁用 exceptions 和 RTTI

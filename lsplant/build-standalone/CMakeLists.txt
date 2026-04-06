@@ -15,8 +15,7 @@ add_subdirectory(
     lsplant-core-build
 )
 
-# 查找 libcxx
-find_package(cxx REQUIRED CONFIG)
+# 查找 libcxx (NDK 25+ 已废弃)
 
 # 创建 Standalone 库（自由规则）
 add_library(lsplant_standalone SHARED
@@ -34,10 +33,12 @@ target_include_directories(lsplant_standalone PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/../src/main/jni
 )
 
-# Standalone 自由规则：link lsplant-core 和 c++_shared
+# Standalone 自由规则：link lsplant-core 和 自动处理 c++_shared
+# 增加 --whole-archive 强制防止 LTO 以及 ld 死代码消除把空项目直接剥离干净
 target_link_libraries(lsplant_standalone PRIVATE
+    -Wl,--whole-archive
     lsplant-core
-    cxx::cxx
+    -Wl,--no-whole-archive
 )
 
 # Standalone 自由规则：启用 exceptions 和 RTTI

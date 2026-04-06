@@ -31,8 +31,9 @@ android {
             cmake {
                 abiFilters "armeabi-v7a", "arm64-v8a"
 
+                def stlType = project.hasProperty("lsplant.static_stl") ? "c++_static" : "c++_shared"
                 arguments(
-                        "-DANDROID_STL=c++_shared",
+                        "-DANDROID_STL=${stlType}",
                         "-DANDROID_SUPPORT_FLEXIBLE_PAGE_SIZES=ON",
                         "-DDEBUG_SYMBOLS_PATH=${project.layout.buildDirectory.file("symbols/standalone").get().asFile.absolutePath}",
                         "-DANDROID_CPP_FEATURES=exceptions;rtti"

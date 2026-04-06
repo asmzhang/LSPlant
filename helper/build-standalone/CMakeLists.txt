@@ -11,12 +11,11 @@ project(helper-standalone LANGUAGES C CXX)
 
 # 添加核心源码
 add_subdirectory(
-    ${CMAKE_CURRENT_LIST_DIR}/../../src/main/cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../src/main/cpp
     helper-core-build
 )
 
-# 查找 libcxx
-find_package(cxx REQUIRED CONFIG)
+# 查找 libcxx (NDK 25+ 不再提供 cxx prefab 包，已移除)
 
 # 创建 Standalone 库（自由规则）
 add_library(helper_standalone SHARED
@@ -31,13 +30,15 @@ set_target_properties(helper_standalone PROPERTIES
 
 # 包含目录
 target_include_directories(helper_standalone PUBLIC
-    ${CMAKE_CURRENT_LIST_DIR}/../../src/main/cpp
+    ${CMAKE_CURRENT_LIST_DIR}/../src/main/cpp
 )
 
-# Standalone 自由规则：link helper-core 和 c++_shared
+# Standalone 自由规则：link helper-core 和 自动处理 c++_shared
+# 添加全量保留参数，防止由于空入口导致静态库逻辑全被死代码剔除 (1kb size)
 target_link_libraries(helper_standalone PRIVATE
+    -Wl,--whole-archive
     helper-core
-    cxx::cxx
+    -Wl,--no-whole-archive
 )
 
 # Standalone 自由规则：启用 exceptions 和 RTTI
