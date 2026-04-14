@@ -6,6 +6,12 @@
 #define LOG_TAG "LSPlant"
 #endif
 
+// Development diagnostics:
+// - LOGD / LOGV are for high-frequency internal state and are compiled out in release builds.
+// Runtime logs:
+// - LOGW / LOGE / LOGF are for degraded behavior and failures that matter in non-debug
+//   environments.
+// - LOGI is treated as low-signal lifecycle logging and is compiled out in release builds.
 #ifdef LOG_DISABLED
 #define LOGD(...) 0
 #define LOGV(...) 0
@@ -28,8 +34,11 @@
 #else
 #define LOGD(...) 0
 #define LOGV(...) 0
+#define LOGI(...) 0
 #endif
+#ifndef NDEBUG
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, LOG_TAG, __VA_ARGS__)
+#endif
 #define LOGW(...) __android_log_print(ANDROID_LOG_WARN, LOG_TAG, __VA_ARGS__)
 #define LOGE(...) __android_log_print(ANDROID_LOG_ERROR, LOG_TAG, __VA_ARGS__)
 #define LOGF(...) __android_log_print(ANDROID_LOG_FATAL, LOG_TAG, __VA_ARGS__)

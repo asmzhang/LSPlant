@@ -20,7 +20,11 @@
 #define LOGF(...)  __android_log_print(ANDROID_LOG_FATAL, LOG_TAG, __VA_ARGS__)
 
 // 移除对NDEBUG的检查，确保LOGD在所有构建类型中都能工作
+#ifndef NDEBUG
 #define LOGD(...)  __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, __VA_ARGS__)
+#else
+#define LOGD(...)  0
+#endif
 
 #endif //ALIUHOOK_LOG_H
 

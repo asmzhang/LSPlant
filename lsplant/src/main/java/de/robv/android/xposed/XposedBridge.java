@@ -442,13 +442,13 @@ public class XposedBridge {
 
     // Aliucord changed: private, so people don't abuse this
 
-    public static  synchronized void log(String text) {
-        Log.i(TAG, text);
+    public static synchronized void log(String text) {
+        if (Log.isLoggable(TAG, Log.DEBUG)) {
+            Log.i(TAG, text);
+        }
     }
-//    private static void log(Throwable t) {
-//        Log.e(TAG, "Uncaught Exception", t);
-//    }
+
     public static synchronized void log(Throwable t) {
-        Log.e(TAG, Log.getStackTraceString(t));
+        Log.e(TAG, "Hook callback failed", t);
     }
 }
