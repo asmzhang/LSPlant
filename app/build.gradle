@@ -71,7 +71,7 @@ dependencies {
     implementation project(':testmod')
 
     debugImplementation project(':helper:build-srcdebug')
-    releaseImplementation project(':helper:build-prefab')
+    releaseImplementation project(':helper:build-standalone')
 
     implementation libs.appcompat
     implementation libs.material

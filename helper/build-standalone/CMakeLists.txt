@@ -15,6 +15,7 @@ add_subdirectory(
     helper-core-build
 )
 
+# Add lsplant core sources for standalone linking.
 # 查找 libcxx (NDK 25+ 不再提供 cxx prefab 包，已移除)
 
 # 创建 Standalone 库（自由规则）

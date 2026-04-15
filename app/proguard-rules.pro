@@ -22,3 +22,15 @@
 
 # 禁止内联和删除未使用的方法（防止 R8 优化掉）
 -dontoptimize
+
+-keep class com.asmzx.helper.hooker {
+    public static void hooks();
+}
+
+-keep class com.asmzx.android_attack_defense_test.MainActivity {
+    public java.lang.String stringFromJNI();
+}
+
+-keep class com.my.testmod.testcls {
+    public static int test(int, int, java.lang.Object[]);
+}

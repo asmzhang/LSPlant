@@ -40,7 +40,8 @@ android {
 
 dependencies {
 
-    implementation project(':lsplant:build-srcdebug')
+    debugImplementation project(':lsplant:build-srcdebug')
+    releaseImplementation project(':lsplant:build-standalone')
 //    implementation project(':antidebug')
 
     implementation libs.appcompat

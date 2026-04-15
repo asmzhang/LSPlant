@@ -80,6 +80,14 @@ android {
         abortOnError true
         checkReleaseBuilds false
     }
+
+    sourceSets {
+        main {
+            java {
+                srcDirs = ['../src/main/java']
+            }
+        }
+    }
 }
 
 dependencies {
