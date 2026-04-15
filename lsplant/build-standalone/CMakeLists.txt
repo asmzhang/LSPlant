@@ -49,15 +49,15 @@ target_compile_options(lsplant_standalone PRIVATE
 
 # Standalone 自由规则：使用 LTO
 target_compile_options(lsplant_standalone PRIVATE
-    -flto
+    -fno-lto
 )
 target_link_options(lsplant_standalone PRIVATE
-    -flto
+    -fno-lto
 )
 
 # Standalone 自由规则：使用共享 STL
 set_target_properties(lsplant_standalone PROPERTIES
-    ANDROID_STL c++_shared
+    ANDROID_STL c++_static
 )
 
 # 提取符号并 strip
